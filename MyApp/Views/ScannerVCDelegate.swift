@@ -14,8 +14,15 @@ enum CameraError: String {
     case invalidDeviceInput = "The value scanned is not a valid barcode. This app only supports EAN-8 and EAN-13"
 }
 
+<<<<<<< HEAD
 protocol ScannerVCDelegate: AnyObject {
     func didFind(barcode: String) // Called when a barcode is successfully scanned.
+=======
+final class ScannerVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
+    let captureSession = AVCaptureSession()
+    var previewLayer: AVCaptureVideoPreviewLayer?
+    weak var scannerDelegate: ScannerVCDelegate?
+>>>>>>> 875ebefa16ef231c10c7e7c4be84a3f78f5ada4f
     
     func didFail(with error: CameraError) // Called when an error occurs during scanning.
 }
@@ -37,6 +44,7 @@ final class ScannerVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate 
         fatalError("init(coder:) has not been implemented")
     }
     
+<<<<<<< HEAD
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCaptureSession()
@@ -107,5 +115,45 @@ final class ScannerVC: UIViewController, AVCaptureMetadataOutputObjectsDelegate 
         scannerDelegate?.didFind(barcode: barcodeStringValue) // Notify delegate with the scanned barcode.
         
         print("Scanned barcode: \(barcodeStringValue)") // Print the scanned barcode to the console.
+=======
+    private func setupCaptureSession() {
+        guard let backCameraDevice = AVCaptureDevice.default(for: .video) else { return }
+        let videoInput: AVCaptureDeviceInput
+        do {
+            try videoInput = AVCaptureDeviceInput(device: backCameraDevice)
+            if(captureSession.canAddInput(videoInput)){
+                captureSession.addInput(videoInput)
+            } else { return }
+            
+        } catch {
+            print("Failed to create AVCaptureDeviceInput \(error)")
+        }
+        
+        
+        let metadataOutput = AVCaptureMetadataOutput()
+        if(captureSession.canAddOutput(metadataOutput)){
+            captureSession.addOutput(metadataOutput)
+            
+            metadataOutput.setMetadataObjectsDelegate(self, queue: .main)
+            metadataOutput.metadataObjectTypes = [.qr, .ean8, .ean13]
+        } else { return }
+        
+        previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        previewLayer?.videoGravity = .resizeAspectFill
+        previewLayer?.frame = view.layer.bounds
+        view.layer.addSublayer(previewLayer!)
+        
+        captureSession.startRunning()
+    }
+    
+    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
+        guard let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject else { return }
+        
+        guard let barcodeStringValue = metadataObject.stringValue else { return }
+        
+        scannerDelegate?.didFind(barcode: barcodeStringValue)
+        
+        print("Scanned barcode: \(barcodeStringValue)")
+>>>>>>> 875ebefa16ef231c10c7e7c4be84a3f78f5ada4f
     }
 }
