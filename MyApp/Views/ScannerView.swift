@@ -12,9 +12,7 @@ struct ScannerView: UIViewControllerRepresentable {
         ScannerVC(scannerDelegate: context.coordinator)
     }
     
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-    
-    }
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
         Coordinator()
