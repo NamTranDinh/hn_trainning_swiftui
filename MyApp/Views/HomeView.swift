@@ -10,18 +10,14 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var progress: NetworkProgress = .initial
-    @State private var appetizers: [Appetizer] = []
-    
-    init() {
-        getAppetizers()
-    }
+    let viewmodel: AppetizersViewMModel = AppetizersViewMModel.shared
     
     var body: some View {
         NavigationView(content: {
-            if appetizers.isEmpty {
+            if viewmodel.appetizers.isEmpty && self.progress == .success {
                 EmptyCartView()
             } else {
-                List(appetizers, id: \.id) { appetizer in
+                List(viewmodel.appetizers, id: \.id) { appetizer in
                     AppetizerItem(appetizer: appetizer)
                 }
                 .navigationBarTitle(Text("Appetizers"))
@@ -29,28 +25,24 @@ struct HomeView: View {
                 .listStyle(.sidebar)
                 .contentMargins(.zero)
                 .overlay(Group {
-                    if self.progress == NetworkProgress.loading {
+                    if self.progress == .loading {
                         ProgressView()
                     }
                 })
+                .refreshable {
+                    getData()
+                }
             }
+        }).onAppear{
+            getData()
+        }
+    }
+    
+    func getData() {
+        viewmodel.getAppetizers(completion: {
+            progress =  viewmodel.loadingStatus
         })
     }
-    
-    
-    func getAppetizers() {
-        NetworkManager.shared.getAppetizers { rs in
-            switch rs {
-            case .success(let appetizers):
-                self.appetizers = appetizers
-            case .failure(let error):
-                self.appetizers.removeAll()
-                print(error.localizedDescription)
-            }
-        }
-        
-    }
-    
 }
 
 #Preview {
