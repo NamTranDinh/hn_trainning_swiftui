@@ -10,6 +10,7 @@ import SwiftUI
 
 final class NetworkManager {
     static let shared = NetworkManager()
+    private let cache: NSCache<NSString, UIImage> = NSCache()
     
     static let baseURL: String = "http://seanallen-course-backend.herokuapp.com/swiftui-fundamentals"
     
@@ -43,6 +44,37 @@ final class NetworkManager {
             } catch {
                 completed(.failure(.invalidData))
             }
+        }.resume()
+    }
+    
+    func downloadImage(from url: String, completed: @escaping (UIImage?) -> Void) {
+        
+        let cacheKey = NSString(string: url)
+        
+        if let image = cache.object(forKey: cacheKey) {
+            completed(image)
+            return
+        }
+        
+        guard let url = URL(string: url) else {
+            completed(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: URLRequest(url: url)) { data, res, error in
+            guard let data = data else {
+                completed(nil)
+                return
+            }
+            
+            let image = UIImage(data: data)
+            
+            self.cache.setObject(image!, forKey: cacheKey)
+            
+            DispatchQueue.main.async {
+                completed(image)
+            }
+            
         }.resume()
     }
 }

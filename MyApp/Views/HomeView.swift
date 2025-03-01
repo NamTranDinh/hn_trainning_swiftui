@@ -65,29 +65,12 @@ struct AppetizerItem: View {
     
     var body: some View {
         HStack(alignment: .center) {
-            AsyncImage(url: URL(string: appetizer.imageURL)) { phase in
-                switch phase {
-                case .failure:
-                    Image(systemName: "photo")
-                        .frame(width: 128, height: 100)
-                        .background(.gray.opacity(0.3))
-                        .clipShape(.rect(cornerRadius: 16))
-                        .font(.largeTitle)
-                case .success(let image):
-                    image
-                        .resizable()
-                        .frame(width: 128, height: 100)
-                        .background(.gray.opacity(0.3))
-                        .clipShape(.rect(cornerRadius: 16))
-                        .font(.largeTitle)
-                default:
-                    ProgressView()
-                        .frame(width: 128, height: 100)
-                        .background(.gray.opacity(0.3))
-                        .clipShape(.rect(cornerRadius: 16))
-                }
-            }
-            
+            AppetizerImage(url: appetizer.imageURL)
+                .frame(width: 128, height: 100)
+                .background(.gray.opacity(0.3))
+                .clipShape(.rect(cornerRadius: 16))
+                .font(.largeTitle)
+
             VStack(alignment: .leading) {
                 Text(appetizer.name)
                     .bold()
@@ -103,8 +86,6 @@ struct AppetizerItem: View {
 #Preview {
     AppetizerItem(appetizer: MockDataAppetizers.sampleAppetizers.first!)
 }
-
-
 
 struct EmptyCartView: View {
     var body: some View {
@@ -126,7 +107,6 @@ struct EmptyCartView: View {
                 .padding(.top, 5)
             
             Button(action: {
-                // Action to continue shopping
                 print("Continue Shopping tapped")
             }) {
                 Text("Continue Shopping")
