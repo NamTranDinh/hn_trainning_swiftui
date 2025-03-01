@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject var viewmodel: AppetizersViewMModel = AppetizersViewMModel.shared
     
-    @State private var progress: NetworkProgress = .initial
-    let viewmodel: AppetizersViewMModel = AppetizersViewMModel.shared
-    
-    var body: some View {
-        NavigationView(content: {
-            if viewmodel.appetizers.isEmpty && self.progress == .success {
+    fileprivate func AppetizerList() -> some View {
+        return NavigationView {
+            if (viewmodel.appetizers.isEmpty && viewmodel.networkProgress == .success) ||  viewmodel.networkProgress == .failure {
                 EmptyCartView()
             } else {
                 List(viewmodel.appetizers, id: \.id) { appetizer in
@@ -24,24 +22,36 @@ struct HomeView: View {
                 .scrollContentBackground(.hidden)
                 .listStyle(.sidebar)
                 .contentMargins(.zero)
-                .overlay(Group {
-                    if self.progress == .loading {
-                        ProgressView()
-                    }
-                })
                 .refreshable {
                     getData()
                 }
+                
             }
-        }).onAppear{
+        }
+        .alert(item: $viewmodel.alertMessage) { alert in
+            Alert(
+                title: Text(alert.title),
+                message: Text(alert.message),
+                dismissButton: alert.dissmissButton
+            )
+        }
+        .onAppear{
             getData()
         }
     }
     
+    var body: some View {
+        ZStack {
+            AppetizerList()
+            
+            if (viewmodel.networkProgress == .loading) {
+                LoadingOverlayView()
+            }
+        }
+    }
+    
     func getData() {
-        viewmodel.getAppetizers(completion: {
-            progress =  viewmodel.loadingStatus
-        })
+        viewmodel.getAppetizers()
     }
 }
 
@@ -66,6 +76,10 @@ struct AppetizerItem: View {
                 case .success(let image):
                     image
                         .resizable()
+                        .frame(width: 128, height: 100)
+                        .background(.gray.opacity(0.3))
+                        .clipShape(.rect(cornerRadius: 16))
+                        .font(.largeTitle)
                 default:
                     ProgressView()
                         .frame(width: 128, height: 100)

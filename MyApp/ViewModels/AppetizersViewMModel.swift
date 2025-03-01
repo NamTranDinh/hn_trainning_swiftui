@@ -10,34 +10,26 @@ import SwiftUI
 final class AppetizersViewMModel: ObservableObject {
     
     static let shared = AppetizersViewMModel()
-        
-    @Published var appetizers: [Appetizer] = []
-    var loadingStatus: NetworkProgress = .initial
-
     
-    func getAppetizers(completion: @escaping () -> Void) {
-            loadingStatus = .loading
-            // Notify that loading has started
-            completion() // Notify the UI to update (e.g., show a loading spinner)
-
+    @Published var appetizers: [Appetizer] = []
+    @Published var alertMessage: AlertMessage?
+    @Published var networkProgress: NetworkProgress = .initial
+    
+    func getAppetizers() {
+        self.networkProgress = .loading
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             NetworkManager.shared.getAppetizers { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let appetizers):
-                        self.appetizers = appetizers
-                        self.loadingStatus = .success
-                        // Notify that loading has finished successfully
-                        completion() // Notify the UI to update
-                    case .failure(let error):
-                        self.appetizers.removeAll()
-                        self.loadingStatus = .failure
-                        // Notify that loading has finished with failure
-                        completion() // Notify the UI to update
-                        print(error.localizedDescription)
-                    }
+                switch result {
+                case .success(let appetizers):
+                    self.appetizers = appetizers
+                    self.networkProgress = .success
+                    self.alertMessage = nil
+                case .failure(let error):
+                    self.appetizers.removeAll()
+                    self.alertMessage = NetworkExeption.getNetworkException(from: error)
+                    self.networkProgress = .failure
                 }
             }
         }
-    
-    
+    }
 }

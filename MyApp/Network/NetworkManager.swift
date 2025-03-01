@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 final class NetworkManager {
     static let shared = NetworkManager()
@@ -13,12 +14,8 @@ final class NetworkManager {
     static let baseURL: String = "http://seanallen-course-backend.herokuapp.com/swiftui-fundamentals"
     
     static let appetizerURL: String = baseURL + "/appetizers"
-    
-    private init() {
         
-    }
-    
-    func getAppetizers(completed: @escaping (Result<[Appetizer], APError>) -> Void) {
+    func getAppetizers(completed: @escaping (Result<[Appetizer], NetworkError>) -> Void) {
         guard let url = URL(string: NetworkManager.appetizerURL) else {
             completed(.failure(.invalidURL))
             return
@@ -29,7 +26,6 @@ final class NetworkManager {
                 completed(.failure(.unableToCompleteRequest))
                 return
             }
-            
             
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
                 completed(.failure(.invalidResponse))
@@ -49,6 +45,4 @@ final class NetworkManager {
             }
         }.resume()
     }
-    
-    
 }

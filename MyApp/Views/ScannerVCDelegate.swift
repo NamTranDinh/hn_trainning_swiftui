@@ -9,7 +9,8 @@ import UIKit
 import AVFoundation
 import SwiftUI
 
-struct AlertMessage {
+struct AlertMessage: Identifiable {
+    let id: UUID = UUID()
     let title: String
     let message: String
     let dissmissButton: Alert.Button

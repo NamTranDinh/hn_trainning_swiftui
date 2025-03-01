@@ -7,14 +7,25 @@
 
 import SwiftUI
 
-struct LoadingOverlay: View {
+struct LoadingIndicator: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIActivityIndicatorView {
+        let activityIndicatorView = UIActivityIndicatorView(style: .large)
+        activityIndicatorView.color = UIColor(named: "brandColor")
+        activityIndicatorView.startAnimating()
+        return activityIndicatorView
+    }
+    
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {
+        
+    }
+}
+
+struct LoadingOverlayView: View {
     var body: some View {
-        Color.black.opacity(0.5)
-            .ignoresSafeArea()
-        VStack {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle())
-                .scaleEffect(1.5, anchor: .center)
+        ZStack {
+            Color(.systemBackground)
+                .edgesIgnoringSafeArea(.all)
+            LoadingIndicator()
         }
     }
 }

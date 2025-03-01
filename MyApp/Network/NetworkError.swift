@@ -7,11 +7,16 @@
 
 import Foundation
 
-enum APError: Error {
+enum NetworkError: Error {
     case invalidURL
     case invalidResponse
     case invalidData
     case unableToCompleteRequest
+    case decodingError
+    case genericError
+    case timeoutError
+    case unauthorizedAccess
+    case serverError
 }
 
 enum NetworkProgress {
