@@ -17,7 +17,11 @@ struct HomeView: View {
             } else {
                 List(viewmodel.appetizers, id: \.id) { appetizer in
                     AppetizerItem(appetizer: appetizer)
+                        .onTapGesture {pGesture in
+                            viewmodel.appetizerDetail = appetizer
+                        }
                 }
+                .disabled(viewmodel.appetizerDetail != nil)
                 .navigationBarTitle(Text("Appetizers"))
                 .scrollContentBackground(.hidden)
                 .listStyle(.sidebar)
@@ -38,6 +42,7 @@ struct HomeView: View {
         .onAppear{
             getData()
         }
+        .blur(radius: viewmodel.appetizerDetail == nil ? 0 : 10)
     }
     
     var body: some View {
@@ -46,6 +51,13 @@ struct HomeView: View {
             
             if (viewmodel.networkProgress == .loading) {
                 LoadingOverlayView()
+            }
+            
+            if viewmodel.appetizerDetail != nil {
+                AppetizerDetailView(
+                    appreciater: viewmodel.appetizerDetail!,
+                    viewModel: viewmodel
+                )
             }
         }
     }
@@ -70,7 +82,7 @@ struct AppetizerItem: View {
                 .background(.gray.opacity(0.3))
                 .clipShape(.rect(cornerRadius: 16))
                 .font(.largeTitle)
-
+            
             VStack(alignment: .leading) {
                 Text(appetizer.name)
                     .bold()

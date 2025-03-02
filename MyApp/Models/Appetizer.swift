@@ -11,7 +11,7 @@ struct AppetizerResponse: Decodable {
     let request: [Appetizer]
 }
 
-struct Appetizer: Codable, Hashable {
+struct Appetizer: Codable, Hashable, Identifiable {
     let protein, carbs: Int
     let imageURL: String
     let description: String

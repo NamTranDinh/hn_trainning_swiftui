@@ -11,6 +11,7 @@ final class AppetizersViewMModel: ObservableObject {
     
     static let shared = AppetizersViewMModel()
     
+    @Published var appetizerDetail: Appetizer?
     @Published var appetizers: [Appetizer] = []
     @Published var alertMessage: AlertMessage?
     @Published var networkProgress: NetworkProgress = .initial
