@@ -36,11 +36,11 @@ struct ScannerView: UIViewControllerRepresentable {
         func didFail(with error: CameraError) {
             switch error {
             case .invalidDeviceInput:
-                barcodeViewModel.alertMessage = AlertContent.invalidDeviceInput
+                barcodeViewModel.alertMessage = ScannerCodeErrorContext.invalidDeviceInput
             case .invalidScanValue:
-                barcodeViewModel.alertMessage = AlertContent.invalidScanValue
+                barcodeViewModel.alertMessage = ScannerCodeErrorContext.invalidScanValue
             case .unableToInitialize:
-                barcodeViewModel.alertMessage = AlertContent.unableToInitialize
+                barcodeViewModel.alertMessage = ScannerCodeErrorContext.unableToInitialize
             }
             print("ScannnerView: didFail \(error)")
         }
