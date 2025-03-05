@@ -34,6 +34,7 @@ struct AccountView: View {
                         } label: {
                             Text("Save Changes")
                         }
+                        .modifier(PrimaryButtonStyle())
                     }
                 )
                 
