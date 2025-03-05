@@ -63,7 +63,7 @@ struct AppetizerDetailView: View {
             Spacer()
             
             Button("$\(String(format: "%.2f", appreciater.price)) - Add To Order ") {
-                print("Add item to card")
+                viewModel.addToOrder(item: appreciater)
                 viewModel.appetizerDetail = nil
             }
             .frame(width: widthCard * 0.9, height: 50)

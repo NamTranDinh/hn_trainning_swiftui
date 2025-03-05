@@ -18,8 +18,8 @@ final class AppetizersViewMModel: ObservableObject {
     
     func getAppetizers() {
         self.networkProgress = .loading
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            NetworkManager.shared.getAppetizers { result in
+        NetworkManager.shared.getAppetizers { result in
+            DispatchQueue.main.sync {
                 switch result {
                 case .success(let appetizers):
                     self.appetizers = appetizers
@@ -30,6 +30,25 @@ final class AppetizersViewMModel: ObservableObject {
                     self.alertMessage = NetworkExeption.getNetworkException(from: error)
                     self.networkProgress = .failure
                 }
+            }
+        }
+    }
+    
+    func addToOrder(item: Appetizer) {
+        if let data = UserDefaults.standard.data(forKey: "orders"),
+           var appetizersInStore = try? JSONDecoder().decode([Appetizer].self, from: data) {
+            
+            appetizersInStore.append(item)
+            
+            if let updatedData = try? JSONEncoder().encode(appetizersInStore) {
+                UserDefaults.standard.set(updatedData, forKey: "orders")
+                alertMessage = OrderMessgaeContext.addItemSuccessfully
+            }
+        } else {
+            let newAppetizers = [item]
+            if let newData = try? JSONEncoder().encode(newAppetizers) {
+                UserDefaults.standard.set(newData, forKey: "orders")
+                alertMessage = OrderMessgaeContext.addItemSuccessfully
             }
         }
     }

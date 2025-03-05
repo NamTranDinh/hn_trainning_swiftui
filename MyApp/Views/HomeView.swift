@@ -41,6 +41,7 @@ struct HomeView: View {
         }
         .onAppear{
             getData()
+            
         }
         .blur(radius: viewmodel.appetizerDetail == nil ? 0 : 10)
     }
@@ -100,6 +101,7 @@ struct AppetizerItem: View {
 }
 
 struct EmptyCartView: View {
+    private var tabVM = TabViewModel.shared
     var body: some View {
         VStack {
             Image(systemName: "cart.fill")
@@ -119,19 +121,27 @@ struct EmptyCartView: View {
                 .padding(.top, 5)
             
             Button(action: {
-                print("Continue Shopping tapped")
+                // 0 -> HomeView
+                // 1 -> AccountView
+                // 2 -> OrderView
+                tabVM.selectTab(at: 0)
             }) {
                 Text("Continue Shopping")
                     .fontWeight(.semibold)
                     .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
                     .foregroundColor(.white)
-                    .cornerRadius(10)
             }
+            .frame(maxWidth: .infinity)
+            .background(Color("brandColor"))
+            .cornerRadius(10)
             .padding(.top, 20)
         }
+        
         .padding()
     }
+}
+
+#Preview {
+    EmptyCartView()
 }
 

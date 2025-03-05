@@ -6,37 +6,45 @@
 //
 
 import Foundation
+import SwiftUI
 
 final class AccountViewModel : ObservableObject {
     public static let shared = AccountViewModel()
     
-    @Published var firstName: String = ""
-    @Published var lastName: String = ""
-    @Published var email: String = ""
-    @Published var birthday: Date = Date()
-    @Published var extraNapkins: Bool = false
-    @Published var frequentRefills: Bool = false
-    
+    @Published var user: User = User()
     @Published var alertMessage: AlertMessage?
     
+    func saveUserInfo() {
+        guard isValidForm else {
+            return
+        }
+        if let data = try? JSONEncoder().encode(self.user) {
+            UserDefaults.standard.set(data, forKey: "userInfo")
+            self.alertMessage = AccountMessageContext.saveUserSuccessfully
+        } else {
+            self.alertMessage = AccountMessageContext.saveUserFailure
+        }
+    }
+    
+    func retrieveUserInfo() -> User {
+        if let data = UserDefaults.standard.data(forKey: "userInfo") {
+            if let user = try? JSONDecoder().decode(User.self, from: data) {
+                self.user = user
+            }
+        }
+        return self.user
+    }
+    
     var isValidForm: Bool {
-        guard !firstName.isEmpty && !lastName.isEmpty && !email.isEmpty else {
+        guard !user.firstName.isEmpty && !user.lastName.isEmpty && !user.email.isEmpty else {
             alertMessage = FormErrorContext.invalidForm
             return false
         }
-        guard email.isValidEmail else {
+        guard user.email.isValidEmail else {
             alertMessage = FormErrorContext.invalidEmail
             return false
         }
         alertMessage = nil
         return true
     }
-    
-    func saveChanges() {
-        guard isValidForm else {
-            return
-        }
-        
-    }
-    
 }

@@ -9,12 +9,14 @@ import SwiftUI
 
 struct AppetizersTabView: View {
     
+    @StateObject private var tabVM = TabViewModel.shared
+    
     init(){
         setupTabBarTheme()
     }
     
     var body: some View {
-        TabView {
+        TabView(selection: $tabVM.selectedTabIndex) {
             HomeView()
                 .tag(0)
                 .tabItem{

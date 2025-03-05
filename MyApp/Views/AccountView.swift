@@ -17,20 +17,20 @@ struct AccountView: View {
                 Section (
                     header: Text("Personal Info"),
                     content: {
-                        TextField("First Name", text: $accViewModel.firstName)
-                        TextField("Last Name", text: $accViewModel.lastName)
-                        TextField("Email", text: $accViewModel.email)
+                        TextField("First Name", text: $accViewModel.user.firstName)
+                        TextField("Last Name", text: $accViewModel.user.lastName)
+                        TextField("Email", text: $accViewModel.user.email)
                             .keyboardType(.emailAddress)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                         DatePicker(
                             "Birthday",
-                            selection: $accViewModel.birthday,
+                            selection: $accViewModel.user.birthday,
                             displayedComponents: .date
                         ).accentColor(Color("brandColor"))
                         
                         Button {
-                            accViewModel.saveChanges()
+                            accViewModel.saveUserInfo()
                         } label: {
                             Text("Save Changes")
                         }
@@ -40,8 +40,8 @@ struct AccountView: View {
                 Section (
                     header: Text("Request"),
                     content: {
-                        Toggle("Extra Napkins", isOn: $accViewModel.extraNapkins)
-                        Toggle("Frequent Refills", isOn: $accViewModel.frequentRefills)
+                        Toggle("Extra Napkins", isOn: $accViewModel.user.extraNapkins)
+                        Toggle("Frequent Refills", isOn: $accViewModel.user.frequentRefills)
                     }
                 )
                 .toggleStyle(SwitchToggleStyle(tint: Color("brandColor")))
@@ -54,6 +54,10 @@ struct AccountView: View {
                 message: Text(alert.message),
                 dismissButton: alert.dissmissButton
             )
+        }
+        .onAppear {
+            let userInfo = accViewModel.retrieveUserInfo()
+            print(userInfo)
         }
     }
 }
