@@ -7,11 +7,11 @@
 
 import Foundation
 
-class TabViewModel: ObservableObject {
+class AppViewModel: ObservableObject {
     @Published var selectedTabIndex: Int = 0
     
     // Static constant for the singleton instance
-    static let shared = TabViewModel()
+    static let shared = AppViewModel()
     
     // Private initializer to prevent creating new instances
     private init() {}

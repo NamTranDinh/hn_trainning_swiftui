@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AppetizerDetailView: View {
     
+    @EnvironmentObject var orderVm: OrderViewModel
+    
     let appreciater: Appetizer
     let viewModel: AppetizersViewMModel
     
@@ -63,7 +65,7 @@ struct AppetizerDetailView: View {
             Spacer()
             
             Button("$\(String(format: "%.2f", appreciater.price)) - Add To Order ") {
-                viewModel.addToOrder(item: appreciater)
+                viewModel.addToOrder(item: appreciater, orderVm: orderVm)
                 viewModel.appetizerDetail = nil
             }
             .frame(width: widthCard * 0.9, height: 50)
@@ -108,6 +110,6 @@ struct AppetizerDetailView: View {
 #Preview {
     AppetizerDetailView(
         appreciater: MockDataAppetizers.sampleAppetizers.first!,
-        viewModel: AppetizersViewMModel.shared
+        viewModel: AppetizersViewMModel()
     )
 }

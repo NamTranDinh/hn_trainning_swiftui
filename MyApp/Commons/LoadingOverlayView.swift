@@ -23,9 +23,13 @@ struct LoadingIndicator: UIViewRepresentable {
 struct LoadingOverlayView: View {
     var body: some View {
         ZStack {
-            Color(.systemBackground)
+            Color(.systemBackground.withAlphaComponent(0.0))
                 .edgesIgnoringSafeArea(.all)
             LoadingIndicator()
         }
     }
+}
+
+#Preview {
+    LoadingOverlayView()
 }

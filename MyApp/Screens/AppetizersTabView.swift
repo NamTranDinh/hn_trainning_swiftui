@@ -9,9 +9,10 @@ import SwiftUI
 
 struct AppetizersTabView: View {
     
-    @StateObject private var tabVM = TabViewModel.shared
+    @StateObject private var tabVM = AppViewModel.shared
+    @StateObject private var orderVM = OrderViewModel()
     
-    init(){
+    init() {
         setupTabBarTheme()
     }
     
@@ -33,15 +34,18 @@ struct AppetizersTabView: View {
             
             OrderView()
                 .tag(2)
+                .badge(orderVM.appetizersInStore.count)
                 .tabItem{
                     Image(systemName: "bag")
                     Text("Order")
                 }
-            
         }
+        .environmentObject(orderVM)
         .ignoresSafeArea()
         .accentColor(Color("brandColor"))
-        
+        .onAppear {
+            orderVM.getAppetizersInStore()
+        }
     }
     
     func setupTabBarTheme() {

@@ -9,8 +9,8 @@ import SwiftUI
 
 struct OrderView: View {
     
-    @StateObject var orderViewModel = OrderViewModel()
-    
+    @EnvironmentObject var orderViewModel: OrderViewModel
+
     var body: some View {
         ZStack {
             NavigationStack {
@@ -30,7 +30,6 @@ struct OrderView: View {
                 EmptyCartView()
             }
         }
-        
         .onAppear {
             orderViewModel.getAppetizersInStore()
         }

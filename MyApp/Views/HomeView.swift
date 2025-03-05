@@ -8,20 +8,21 @@
 import SwiftUI
 
 struct HomeView: View {
-    @StateObject var viewmodel: AppetizersViewMModel = AppetizersViewMModel.shared
+    
+    @StateObject var appetizerVm = AppetizersViewMModel()
     
     fileprivate func AppetizerList() -> some View {
         return NavigationView {
-            if (viewmodel.appetizers.isEmpty && viewmodel.networkProgress == .success) ||  viewmodel.networkProgress == .failure {
+            if (appetizerVm.appetizers.isEmpty && appetizerVm.networkProgress == .success) ||  appetizerVm.networkProgress == .failure {
                 EmptyCartView()
             } else {
-                List(viewmodel.appetizers, id: \.id) { appetizer in
+                List(appetizerVm.appetizers, id: \.id) { appetizer in
                     AppetizerItem(appetizer: appetizer)
                         .onTapGesture {pGesture in
-                            viewmodel.appetizerDetail = appetizer
+                            appetizerVm.appetizerDetail = appetizer
                         }
                 }
-                .disabled(viewmodel.appetizerDetail != nil)
+                .disabled(appetizerVm.appetizerDetail != nil)
                 .navigationBarTitle(Text("Appetizers"))
                 .scrollContentBackground(.hidden)
                 .listStyle(.sidebar)
@@ -32,7 +33,7 @@ struct HomeView: View {
                 
             }
         }
-        .alert(item: $viewmodel.alertMessage) { alert in
+        .alert(item: $appetizerVm.alertMessage) { alert in
             Alert(
                 title: Text(alert.title),
                 message: Text(alert.message),
@@ -43,28 +44,28 @@ struct HomeView: View {
             getData()
             
         }
-        .blur(radius: viewmodel.appetizerDetail == nil ? 0 : 10)
+        .blur(radius: appetizerVm.appetizerDetail == nil ? 0 : 10)
     }
     
     var body: some View {
         ZStack {
             AppetizerList()
             
-            if (viewmodel.networkProgress == .loading) {
+            if (appetizerVm.networkProgress == .loading ) {
                 LoadingOverlayView()
             }
             
-            if viewmodel.appetizerDetail != nil {
+            if appetizerVm.appetizerDetail != nil {
                 AppetizerDetailView(
-                    appreciater: viewmodel.appetizerDetail!,
-                    viewModel: viewmodel
+                    appreciater: appetizerVm.appetizerDetail!,
+                    viewModel: appetizerVm
                 )
             }
         }
     }
     
     func getData() {
-        viewmodel.getAppetizers()
+        appetizerVm.getAppetizers()
     }
 }
 
@@ -98,50 +99,5 @@ struct AppetizerItem: View {
 
 #Preview {
     AppetizerItem(appetizer: MockDataAppetizers.sampleAppetizers.first!)
-}
-
-struct EmptyCartView: View {
-    private var tabVM = TabViewModel.shared
-    var body: some View {
-        VStack {
-            Image(systemName: "cart.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .foregroundColor(.gray)
-            
-            Text("Your cart is empty")
-                .font(.title)
-                .fontWeight(.bold)
-                .padding(.top, 20)
-            
-            Text("Looks like you haven't added anything yet.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .padding(.top, 5)
-            
-            Button(action: {
-                // 0 -> HomeView
-                // 1 -> AccountView
-                // 2 -> OrderView
-                tabVM.selectTab(at: 0)
-            }) {
-                Text("Continue Shopping")
-                    .fontWeight(.semibold)
-                    .padding()
-                    .foregroundColor(.white)
-            }
-            .frame(maxWidth: .infinity)
-            .background(Color("brandColor"))
-            .cornerRadius(10)
-            .padding(.top, 20)
-        }
-        
-        .padding()
-    }
-}
-
-#Preview {
-    EmptyCartView()
 }
 

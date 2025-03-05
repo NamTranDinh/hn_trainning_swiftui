@@ -9,8 +9,6 @@ import SwiftUI
 
 final class AppetizersViewMModel: ObservableObject {
     
-    static let shared = AppetizersViewMModel()
-    
     @Published var appetizerDetail: Appetizer?
     @Published var appetizers: [Appetizer] = []
     @Published var alertMessage: AlertMessage?
@@ -34,22 +32,11 @@ final class AppetizersViewMModel: ObservableObject {
         }
     }
     
-    func addToOrder(item: Appetizer) {
-        if let data = UserDefaults.standard.data(forKey: "orders"),
-           var appetizersInStore = try? JSONDecoder().decode([Appetizer].self, from: data) {
-            
-            appetizersInStore.append(item)
-            
-            if let updatedData = try? JSONEncoder().encode(appetizersInStore) {
-                UserDefaults.standard.set(updatedData, forKey: "orders")
-                alertMessage = OrderMessgaeContext.addItemSuccessfully
-            }
-        } else {
-            let newAppetizers = [item]
-            if let newData = try? JSONEncoder().encode(newAppetizers) {
-                UserDefaults.standard.set(newData, forKey: "orders")
-                alertMessage = OrderMessgaeContext.addItemSuccessfully
-            }
+    func addToOrder(item: Appetizer, orderVm: OrderViewModel) {
+        orderVm.addToOrder(item: item) {
+            alertMessage = OrderMessgaeContext.addItemSuccessfully
+        } failured: {
+            alertMessage = OrderMessgaeContext.addItemFailure
         }
     }
 }
