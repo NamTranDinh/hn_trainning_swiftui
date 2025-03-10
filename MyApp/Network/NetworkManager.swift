@@ -15,6 +15,21 @@ final class NetworkManager {
     static let baseURL: String = "http://seanallen-course-backend.herokuapp.com/swiftui-fundamentals"
     
     static let appetizerURL: String = baseURL + "/appetizers"
+    
+    func getAppetizersV2() async throws -> [Appetizer] {
+        guard let url = URL(string: NetworkManager.appetizerURL) else {
+            throw NetworkError.invalidURL
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw NetworkError.invalidResponse
+        }
+        
+        let appetizerResponse: AppetizerResponse = try JSONDecoder().decode(AppetizerResponse.self, from: data)
+        return appetizerResponse.request
+    }
         
     func getAppetizers(completed: @escaping (Result<[Appetizer], NetworkError>) -> Void) {
         guard let url = URL(string: NetworkManager.appetizerURL) else {
